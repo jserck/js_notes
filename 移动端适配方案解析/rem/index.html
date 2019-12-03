@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <meta name="viewport" content="width=980, initial-scale=2">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>rem适配</title>
+    <script>
+        window.onload = function() {
+            alert(window.screen.width/1);
+            (function rem(win, size = 750) {
+                pxToRem();
+                window.onresize = pxToRem;
+
+                function pxToRem() {
+                    var dom = document.documentElement;
+                    var dw = dom.clientWidth || document.body.clientWidth;
+                    if (dw > size) {
+                        dw = 750;
+                    }
+                    document.documentElement.style.fontSize = dw / 750 * 100 + 'px';
+                }
+                console.log(win.innerWidth);
+            })(window, 750);
+        }
+    </script>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            /* overflow: hidden; */
+        }
+
+        h1 {
+            margin-top: 50px;
+            /* width: 1rem;
+            height: 1rem; */
+            width: 490px;
+            height: 1rem;
+            font-size: 0.3rem;
+            background: red;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>辅导费</h1>
+    <h1>辅导费</h1>
+</body>
+
+</html>
