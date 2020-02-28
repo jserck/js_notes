@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en"
+      dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <title>video.js</title>
+    <link rel="stylesheet"
+          href="./video-js.min.css">
+    <script src="./video.min.js"
+            charset="utf-8"></script>
+    <script src="./videojs-contrib-hls.js"
+            charset="utf-8"></script>
+</head>
+
+<body>
+    <video id="my-player"
+           class="video-js"
+           autoplay
+           controls>
+        <!-- <source src="http://your.static.provider.net/path/to/video.m3u8"
+                type="application/x-mpegURL"> -->
+        <source src="https://sslproxy.yy.com:4443/livesystem/15013_xv_54880976_54880976_0_1_0-15013_xa_54880976_54880976_0_10_0.m3u8?org=yyweb&uuid=e01d4b006b3040f5803101159ad27cf2&t=1582881944&tk=bfbb15bf504fa4a8b0a5fcf4b6e20ae2"
+                type="application/x-mpegURL">
+
+        <source src="../test.mp4"
+                type="video/mp4">
+        <p class="vjs-no-js">
+            not support
+        </p>
+    </video>
+    <script type="text/javascript">
+        var player = videojs('my-player', {
+            width: 400,
+            heigh: 200
+        });
+    </script>
+</body>
+
+</html>
