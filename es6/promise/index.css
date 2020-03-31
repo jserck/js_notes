@@ -1,0 +1,30 @@
+body,html{
+    padding: 0;
+    margin: 0;
+}
+img{
+    display: block;
+    font-size: 0;
+}
+body .g-imgContainer{
+    position: relative;
+    width: 100%;
+    height: 100vh;
+}
+body .g-imgContainer .g-imgMoban{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background: url('./timg.jpg') center center;
+    background-size: 100% 100%;
+    z-index: 99;
+    transition: all 2s ease-out;
+}
+body .g-imgContainer .blur {
+    filter:blur(10px);
+    -webkit-filter:blur(10px);
+    -moz-filter:blur(10px);
+    -ms-filter:blur(10px);
+    -o-filter:blur(10px);
+}
