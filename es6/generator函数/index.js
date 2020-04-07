@@ -110,9 +110,184 @@
 {
   // yeild 用在表达式中一定要加（），但是放在函数的参数或者rsh的时候不用
   function * fene () {
-    console.log('Hello' + (yield '123')) // OK
+    // console.log('Hello' + (yield '123')) // OK
   }
   for (const iterator of fene()) {
-    console.log(iterator)
+    // console.log(iterator)
   }
+}
+{
+  // 与 Iterator 接口的关系
+  const arr = [{ name: 'pxck', age: 1 }, { names: 'pck', ages: 44 }]
+  const [obj1, obj2] = arr
+  const obj = Object.assign({ [Symbol.iterator]: objIntenetorCreate }, obj1, obj2)
+  function * objIntenetorCreate () {
+    yield obj.name
+    yield obj.age
+    yield obj.names
+    yield obj.ages
+  }
+  for (const iterator of obj) {
+    // console.log(iterator)
+  }
+  // console.log(...obj)
+
+  // for (const iterator of obj) {
+  //   console.log(iterator)
+  // }
+  // for (const key in obj) {
+  //   if (obj.hasOwnProperty(key)) {
+  //     const element = obj[key]
+  //     console.log(element)
+  //   }
+  // }
+}
+{
+  // next 方法的参数
+  // iterator接口的yeild 是没有返回值的，如果需要返回值的话，可以通过next方法传入
+  function * f () {
+    for (var i = 0; true; i++) {
+      var reset = yield i
+      if (reset) { i = -1 }
+    }
+  }
+
+  var g = f()
+  // console.log(g.next()) // { value: 0, done: false });
+  // console.log(g.next()) // { value: 0, done: false });
+  // console.log(g.next(true)) // { value: 0, done: false });
+}
+{
+  function * foo (mun) {
+    // const x = (yield (mun + 1))
+    // const y = (yield (x + 1))
+    // const z = (yield y * 2)
+    // return (x + y + z + mun)
+    //* ***原demo */
+    var y = 2 * (yield (mun + 1))
+    var z = yield (y * 3)
+    return (mun + y + z)
+  }
+  var a = foo(5)
+  // console.log(a.next())
+  // console.log(a.next(6))
+  // console.log(a.next(7))
+  // console.log(a.next(14))
+  //* ***原demo */
+  // console.log(a.next())
+  // console.log(a.next(6))
+  // console.log(a.next(7))
+}
+{
+  function * foo () {
+    console.log('staart')
+    console.log(`1.${yield}`)
+    console.log(`2.${yield}`)
+    return 'reset'
+  }
+  const a = foo(5)
+  // console.log(a.next(1))
+  // console.log(a.next(2))
+  // console.log(a.next(3))
+}
+{
+  function wrapper (generatorFunction) {
+    return function (args = '') {
+      const generatorObject = generatorFunction()
+      generatorObject.next(args)
+      return generatorObject
+    }
+  }
+
+  const wrapped = wrapper(function * () {
+    console.log(`First input: ${yield}`)
+    return 'DONE'
+  })
+  // wrapped('hello!').next('hello!')
+  // wrapped().next()
+  // wrapped()
+}
+{
+  // js原生对象无法用for of 来遍历 object is not iterable，以下方法可以实现
+  const obj = {
+    name: 'pck',
+    age: 24
+  }
+  // 1
+  const objNew = Object.assign(Object.create({
+    [Symbol.iterator]: function () {
+      let num = 0
+      const this_ = this
+      return {
+        next: function () {
+          const objKey = Object.keys(objNew)
+          const value = this_[objKey[num]]
+          if (num > objKey.length) {
+            return {
+              done: true
+            }
+          }
+          num++
+          return {
+            value: value,
+            done: num > objKey.length
+          }
+        }
+      }
+    }
+  }), obj)
+  // for (const iterator of objNew) {
+  //   console.log(iterator) // pck 24
+  // }
+
+  // 2
+  function * iteatorGen () {
+    const objKey = Object.keys(this)
+    for (let index = 0; index < objKey.length; index++) {
+      const element = objKey[index]
+      yield this[element]
+    }
+  }
+  obj[Symbol.iterator] = iteatorGen
+  // for (const iterator of obj) {
+  //   console.log(iterator) // pck 24
+  // }
+}
+{
+  function * g1 () {
+    yield 'pck'
+    yield '123'
+  }
+  function * g2 () {
+    yield 'pckggg'
+    yield * g1()
+    yield '123344444'
+  }
+  // for (const iterator of g2()) {
+  //   console.log(iterator)
+  // }
+}
+{
+  // let ticking = true
+  // const clock = function () {
+  //   if (ticking) { console.log('Tick!') } else { console.log('Tock!') }
+  //   ticking = !ticking
+  // }
+  // clock()
+  // clock()
+  // clock()
+  // clock()
+  const clock = function * () {
+    while (true) {
+      console.log('Tick!')
+      yield
+      console.log('Tock!')
+      yield
+    }
+  }
+  const b = clock()
+  b.next()
+  b.next()
+  b.next()
+  b.next()
 }
