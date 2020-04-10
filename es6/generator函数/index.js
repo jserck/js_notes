@@ -286,8 +286,164 @@
     }
   }
   const b = clock()
-  b.next()
-  b.next()
-  b.next()
-  b.next()
+  // b.next()
+  // b.next()
+  // b.next()
+  // b.next()
+}
+{
+  // generator函数如何做异步编程
+  function * g (params) {
+    try {
+      yield '1'
+      yield '2'
+      yield '3'
+      yield '4'
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  // const gTs = g()
+  // console.log(gTs.next())
+  // console.log(gTs.throw(new Error('1111')))
+  // console.log(gTs.next())
+  // console.log(gTs.next())
+  // try {
+
+  // } catch (e) {
+  //   console.log('外部捕获', e)
+  // }
+  // console.log(gTs.next())
+  // console.log(gTs.next())
+}
+{
+  // Generator.prototype.return()
+  function * g () {
+    try {
+      yield 2
+      yield 3
+    } finally {
+      yield 4
+      yield 5
+    }
+    yield 6
+  }
+  const a = g()
+  // console.log(a.next())
+  // console.log(a.return(7))
+  // console.log(a.next())
+  // console.log(a.next())
+}
+{
+  function * g (params) {
+    yield 1
+    yield 2
+  }
+  function * g1 (params) {
+    for (const iterator of g()) {
+      yield iterator
+    }
+    yield 3
+    yield 4
+    yield * g()
+  }
+  const cg = g1()
+  // for (const iterator of cg) {
+  //   console.log(iterator)
+  // }
+}
+{
+  // Generator 函数的this
+  function * g (a) {
+    console.log(this)
+    yield this.a = a
+  }
+  // const obj = {}
+  // const gn = g.call(obj, 1)
+  // const gn = g.call(g.prototype)
+  function F (params) {
+    return g.call(g.prototype, params)
+  }
+  const fn = new F('2')
+  // console.log(fn)
+  // console.log(gn.next())
+  // console.log(fn.a)
+}
+{
+  function * g (params) {
+    console.log('正在加载中')
+    yield setTimeout(() => {
+      console.log('数据请求成功')
+    }, 3000)
+    console.log('加载完成')
+  }
+  const gn = g()
+  // gn.next()
+  // gn.next()
+  // Thunk函数 控制g函数执行流
+  function getHttpThunk (name = '') {
+    return function (cb) {
+      const data = {
+        name
+      }
+      setTimeout(() => {
+        cb(data)
+      }, 2000)
+    }
+  }
+  function cb (data) {
+    console.log(data)
+  }
+  // 正常的执行方式
+  // const fn1 = getHttpThunk('pck1')
+  // const fn2 = getHttpThunk('pck2')
+  // const fn3 = getHttpThunk('pck3')
+  // fn1(cb)
+  // fn2(cb)
+  // fn3(cb)
+  // Thunk执行器
+  function * gen () {
+    const fn1 = yield getHttpThunk('pck1')
+    const fn2 = yield getHttpThunk('pck2')
+    const fn3 = yield getHttpThunk('pck3')
+  }
+  function runGen (gen) {
+    const g = gen()
+    function next (data) {
+      console.log(data)
+      const gReturn = g.next()
+      if (gReturn.done) return
+      if (gReturn && typeof gReturn.value === 'function') gReturn.value(next)
+    }
+    next()
+  }
+  // runGen(gen)
+
+  // promise 执行器
+  function getHttpThunkPm (err, data) {
+    return new Promise((resolve, reject) => {
+      if (err) return reject(err)
+      setTimeout(() => {
+        return resolve(data)
+      }, 2000)
+    })
+  }
+  function * genPm () {
+    const fn1 = yield getHttpThunkPm(undefined, 'pck1')
+    const fn2 = yield getHttpThunkPm(undefined, 'pck2')
+    const fn3 = yield getHttpThunkPm(undefined, 'pck3')
+  }
+  function runGenPm (gen) {
+    const g = gen()
+    function next (data) {
+      const gReturn = g.next()
+      if (gReturn.done) return
+      gReturn.value.then((res) => {
+        console.log(res)
+        next()
+      })
+    }
+    next()
+  }
+  runGenPm(genPm)
 }
