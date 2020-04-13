@@ -445,5 +445,11 @@
     }
     next()
   }
-  runGenPm(genPm)
+  // runGenPm(genPm)
+
+  Promise.resolve('2').then((res) => {
+    return res
+  }).then((res) => {
+    console.log(res)
+  })
 }
