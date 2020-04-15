@@ -125,6 +125,36 @@
   //   asFn().then(res => {
   //     console.log('执行完成')
   //   })
-  const [l, r] = Promise.all([time1(), time2()])
-  console.log(l, r)
+  // const [l, r] = Promise.all([time1(), time2()])
+  // console.log(l, r)
+}
+{
+  // 利用async函数实现多个重复的尝试
+  async function getHttp ({ time = 0, index = 0 } = {}) {
+    const timer = await setTimeout(async () => {
+      const ERRNUM = 2
+      if (index < ERRNUM) {
+        await Promise.reject(new Error('用力啊弟弟'))
+      } else {
+        console.log({ response: { data: { name: `pck${index}` } } })
+      }
+      clearTimeout(timer)
+    }, time)
+  }
+  (async function sleep (fn) {
+    const NUM = 3
+    const SNDATA = {
+      time: 2000,
+      index: 0
+    }
+    for (let index = 0; index < NUM; index++) {
+      try {
+        SNDATA.index = index
+        await fn(SNDATA)
+        break
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  })(getHttp)
 }
