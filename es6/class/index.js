@@ -1,102 +1,92 @@
 {
-  class Bar {
-    constructor (a, b) {
-      this.a = a
-      this.b = b
-    }
-
-    toString () {
-      return `${this.a}${this.b}`
-    }
+  // 基本用法
+  function Point (x, y) {
+    this.x = x
+    this.y = y
   }
-  const bar = new Bar('我爱', 'js')
-//   console.log(bar.toString())
-//   console.log(bar.constructor === Bar.prototype.constructor)
-//   console.log(Bar.prototype.constructor)
-//   console.log(Object.keys(Bar.prototype))
-//   console.log(Object.getOwnPropertyNames(Bar.prototype))
-}
-{
-  const MyClass = class Me {
-    constructor (a) {
-      this.a = a
-    }
-
-    getA () {
-      return me.a
-    }
+  Point.prototype.tostring = function () {
+    console.log(this)
   }
-//   const me = new MyClass('华为')
-//   console.log(me.getA())
-}
-{
-  const MyClass = new class Me {
-    constructor (name = '没有') {
-      this.name = name
-      this.printName = this.printName.bind(this)
+  const p = new Point(1, 2)
+  p.tostring()
+  // calss 改写
+  class Pointsas {
+    constructor (x, y) {
+      this.x = x
+      this.y = y
+      // this.tostring = this.tostring.bind(this)
       this.getThis = () => this
     }
 
-    printName (name = 'there') {
-      this.print(`Hello ${name}`)
+    tostring () {
+      console.log(this.x)
     }
 
-    print (text) {
-      console.log(text)
+    // [Symbol.iterator] () {
+    //   const this_ = this
+    //   return {
+    //     next () {
+    //       const index = this_.x++
+    //       return {
+    //         value: index,
+    //         // eslint-disable-next-line no-unneeded-ternary
+    //         done: index < 5 ? false : true
+    //       }
+    //     }
+    //   }
+    // }
+    * [Symbol.iterator] () {
+      yield 1
+      yield 2
+      yield 3
     }
+  }
+  const ps = new Pointsas(1, 2)
+  const ps2 = new Pointsas(3, 4)
+  // ps.tostring() // this代表类的实例
+  // ps2.tostring()
+  const tos = ps2.tostring
+  // tos() // tostring方法里面的this指向出错
+  console.log(ps2.getThis())
 
-    static getName () {
-      return 'heihei'
-    }
-  }()
-//   MyClass.printName()
-//   console.log(MyClass.name)
-//   const printName = MyClass.printName
-//   printName()
+  tos.call(ps2.getThis())
+  // Pointsas.prototype.tostring() // this代表Point类
+
+  // 不同的是 类的原型上定义的方法都是不可枚举的，但是构造函数可以
+  console.log(Object.keys(Point.prototype)) // ['tostring']
+  console.log(Object.getOwnPropertyNames(Point.prototype))
+
+  console.log(Object.keys(Pointsas.prototype)) // []
+  console.log(Object.getOwnPropertyNames(Pointsas.prototype))
+  console.log(ps.__proto__ === Pointsas.prototype)
+  console.log(ps.__proto__ === ps2.__proto__)
+  const iter = new Pointsas(0, 4)
+  for (const iterator of iter) {
+    console.log(iterator)
+  }
 }
 {
-  // class的继承
-  class MyClass {
-    constructor () {
-      if (new.target.name === 'MyClass') {
-        throw new Error('该类不能实例化')
-      }
-      this.name = 'pck'
-    //   this.getName = this.getName.bind(this)
+  // 静态方法
+  const Point = new class Me {
+    constructor (x) {
+      this.x = x
     }
 
-    age = 18
-    // static属性
-    static xingbie = '女'
-    // static方法
-    static getName () {
-      return this.xingbie
+    static x = 2
+    static getx () {
+      console.log(this.x)
     }
-
-    static c = 'static c'
-  }
-  MyClass.prototype.b = 'asdfsadf'
-  class NewMyClass extends MyClass {
-    constructor () {
+  }(1)
+  // Point.__proto__.constructor.getx()
+  class ExPonit extends Point.__proto__.constructor {
+    constructor (x) {
       super()
-      this.a = 1
-      this.b = super.b
-      super.c = 3 // 指向子类实例
-      this.getC = this.getC.bind(this)
+      this.x = x
     }
 
-    getC () {
-      return super.b // 指向父类的原型对象
-    }
-
-    static getC () {
-      return super.c // 指向父类
-    }
+    static x = 22
   }
-  const me = new NewMyClass()
-  console.log(me)
-  console.log(MyClass.getName())
-  console.log(NewMyClass.getName())
-  console.log(me.getC())
-  console.log(NewMyClass.getC())
+  const exp = new ExPonit(3)
+  console.log(exp.x)
+  console.log(ExPonit.getx())
 }
