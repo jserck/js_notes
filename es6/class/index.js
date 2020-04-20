@@ -89,4 +89,64 @@
   const exp = new ExPonit(3)
   console.log(exp.x)
   console.log(ExPonit.getx())
+  console.log(exp.__proto__ === ExPonit.prototype)
+  console.log('************************************************')
+}
+{
+  class Point {
+    constructor (x, y) {
+      this.x = x
+      this.y = y
+      this.getThis = () => this
+      // this.logThis = this.logThis.bind(this)
+    }
+
+    logThis (x) {
+      console.log(this[x])
+    }
+
+    tostring (str) {
+      console.log(str.toString())
+    }
+
+    static getNowDate () {
+      // const nowDate = new Date('-')
+      console.log(this.x)
+    }
+
+    static name = 'pck'
+    static x = 'pck'
+  }
+  class ExtendsPoint extends Point {
+    constructor (x, y, color) {
+      // this.color = color  //只有在调用super构造函数之后才可以用this
+      super(...[x, y])
+      this.color = color
+      this.x = 4
+      super.y = 55
+    }
+
+    static x = 5
+    getPrintFn (fnName) {
+      super[fnName]('x')
+      console.log(super.x)
+    }
+
+    static getPrintFn (fnName) {
+      super[fnName]('x')
+      console.log(super.x)
+    }
+  }
+  const p = new Point(1, 2)
+  const extendsPonit = new ExtendsPoint(3, 4)
+  p.logThis('x')
+  console.log(p.logThis)
+  const winLogThis = p.logThis.bind(p.getThis())
+  winLogThis('x')
+  console.log(extendsPonit)
+  console.log(ExtendsPoint.__proto__ === Object.getPrototypeOf(ExtendsPoint))
+  extendsPonit.getPrintFn('logThis')
+  ExtendsPoint.getPrintFn('getNowDate')
+  console.log(extendsPonit.y)
+  //* ******类的 prototype 属性和__proto__属性 § ⇧ */
 }
